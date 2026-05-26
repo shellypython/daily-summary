@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌱 工作日记养成记</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ff9a9e 100%);
+  min-height: 100vh; padding: 20px; overflow-x: hidden;
+}
+.float-deco {
+  position: fixed; font-size: 35px; opacity: 0.25;
+  animation: floatUp 6s ease-in-out infinite; pointer-events: none; z-index: 0;
+}
+@keyframes floatUp {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(10deg); }
+}
+.container {
+  max-width: 1200px; margin: 0 auto; background: white;
+  border-radius: 30px; box-shadow: 0 20px 60px rgba(255,105,135,0.3);
+  overflow: hidden; position: relative; z-index: 1;
+}
+header {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white; padding: 35px 30px; text-align: center; position: relative;
+}
+header h1 { font-size: 30px; margin-bottom: 8px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+header p { font-size: 15px; opacity: 0.95; }
+
+.motivation-banner {
+  background: linear-gradient(90deg, #ffeaa7, #fdcb6e, #ffeaa7);
+  background-size: 200% auto;
+  padding: 14px; text-align: center; font-size: 17px;
+  font-weight: bold; color: #d63031;
+  animation: gradShift 3s ease infinite;
+}
+@keyframes gradShift {
+  0%,100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* 花园区域 */
+.garden-section {
+  background: linear-gradient(180deg, #87ceeb 0%, #c8e6c9 60%, #8bc34a 100%);
+  padding: 25px 20px 0; position: relative; overflow: hidden;
+}
+.garden-title {
+  text-align: center; color: white; font-size: 18px;
+  font-weight: bold; margin-bottom: 15px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+.garden {
+  display: flex; justify-content: space-around; align-items: flex-end;
+  min-height: 180px; padding: 10px; position: relative;
+}
+.plant-pot {
+  text-align: center; transition: all 0.5s;
+  cursor: pointer; position: relative;
+}
+.plant-pot:hover { transform: translateY(-5px); }
+.plant-emoji {
+  font-size: 70px; display: block; margin-bottom: 5px;
+  animation: plantSway 3s ease-in-out infinite;
+  filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
+}
+@keyframes plantSway {
+  0%,100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+.plant-label {
+  background: rgba(255,255,255,0.9); padding: 4px 10px;
+  border-radius: 12px; font-size: 12px; color: #333;
+  display: inline-block; font-weight: 600;
+}
+.plant-progress {
+  width: 60px; height: 6px; background: rgba(255,255,255,0.5);
+  border-radius: 3px; margin: 4px auto; overflow: hidden;
+}
+.plant-progress-fill {
+  height: 100%; background: linear-gradient(90deg, #ff6b6b, #f5576c);
+  transition: width 0.5s;
+}
+
+/* 成就面板 */
+.stats-panel {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  padding: 18px; display: flex; justify-content: space-around;
+  flex-wrap: wrap; gap: 12px;
+}
+.stat-badge {
+  background: white; border-radius: 18px; padding: 12px 20px;
+  text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: all 0.3s; min-width: 130px; cursor: pointer;
+}
+.stat-badge:hover { transform: translateY(-5px) scale(1.05); }
+.badge-icon { font-size: 35px; margin-bottom: 5px; animation: bounce 2s infinite; }
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.badge-value { font-size: 22px; font-weight: bold; color: #ff6b6b; }
+.badge-label { font-size: 11px; color: #666; margin-top: 3px; }
+
+/* 标签页 */
+.tabs {
+  display: flex; background: #fff5f8; border-bottom: 3px solid #ffe0e9;
+  flex-wrap: wrap;
+}
+.tab-button {
+  flex: 1; min-width: 120px; padding: 16px; border: none;
+  background: transparent; cursor: pointer; font-size: 15px;
+  font-weight: 600; transition: all 0.3s; color: #999; position: relative;
+}
+.tab-button.active { background: white; color: #ff6b6b; }
+.tab-button.active::after {
+  content: ''; position: absolute; bottom: -3px; left: 0; right: 0;
+  height: 3px; background: linear-gradient(90deg, #ff6b6b, #f093fb);
+}
+.tab-button:hover { background: rgba(255,107,107,0.1); }
+
+.tab-content {
+  display: none; padding: 30px; animation: fadeIn 0.5s;
+  background: linear-gradient(180deg, #fff 0%, #fff5f8 100%);
+}
+.tab-content.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.encourage-box {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  padding: 18px; border-radius: 18px; margin-bottom: 20px;
+  text-align: center; font-size: 16px; font-weight: 600;
+  color: #d63031; border: 3px dashed #ff6b6b;
+}
+
+.form-group { margin-bottom: 22px; }
+label {
+  display: block; margin-bottom: 8px; font-weight: 600;
+  color: #ff6b6b; font-size: 14px;
+}
+input[type="text"], input[type="date"], textarea {
+  width: 100%; padding: 13px; border: 3px solid #ffe0e9;
+  border-radius: 14px; font-size: 14px; transition: all 0.3s;
+  font-family: inherit; background: white;
+}
+input:focus, textarea:focus {
+  outline: none; border-color: #ff6b6b;
+  box-shadow: 0 0 0 4px rgba(255,107,107,0.1);
+}
+textarea { resize: vertical; min-height: 100px; }
+
+.mood-selector { display: flex; gap: 10px; flex-wrap: wrap; }
+.mood-btn {
+  padding: 10px 18px; border: 3px solid #ffe0e9;
+  background: white; border-radius: 14px; cursor: pointer;
+  transition: all 0.3s; font-size: 14px;
+}
+.mood-btn:hover { border-color: #ff6b6b; transform: scale(1.1); }
+.mood-btn.selected {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white; border-color: #f5576c; transform: scale(1.1);
+}
+
+.button-group { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+button {
+  padding: 13px 26px; border: none; border-radius: 22px;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.btn-primary {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white; flex: 1;
+}
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(245,87,108,0.4);
+}
+.btn-primary:active { transform: scale(0.95); }
+.btn-secondary {
+  background: white; color: #ff6b6b; border: 3px solid #ffe0e9;
+}
+.btn-secondary:hover { background: #ffe0e9; transform: translateY(-3px); }
+.btn-export {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333;
+}
+.btn-export:hover { transform: translateY(-3px); }
+
+.history-item {
+  background: white; border: 3px solid #ffe0e9; border-radius: 18px;
+  padding: 18px; margin-bottom: 16px; transition: all 0.3s;
+}
+.history-item:hover {
+  border-color: #ff6b6b; transform: translateX(8px);
+  box-shadow: 0 6px 20px rgba(255,107,107,0.15);
+}
+.history-date {
+  font-weight: 700; color: #f5576c; margin-bottom: 8px; font-size: 15px;
+}
+.history-content { font-size: 14px; color: #666; line-height: 1.7; }
+.history-actions { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-small { padding: 6px 14px; font-size: 12px; border-radius: 12px; }
+
+.report-preview {
+  background: linear-gradient(135deg, #fff 0%, #fffbf0 100%);
+  border: 3px solid #ffeaa7; border-radius: 18px;
+  padding: 22px; margin-top: 18px; white-space: pre-wrap;
+  line-height: 1.9; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.report-preview h3 { color: #ff6b6b; margin-bottom: 15px; font-size: 20px; }
+
+.empty-state { text-align: center; padding: 50px 20px; color: #999; }
+.empty-icon { font-size: 80px; margin-bottom: 15px; animation: swing 2s infinite; }
+@keyframes swing {
+  0%,100% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  75% { transform: rotate(-10deg); }
+}
+
+/* 表情包飞出动画 */
+.emoji-rain {
+  position: fixed; font-size: 50px; pointer-events: none;
+  z-index: 9999; animation: emojiFly 3s ease-out forwards;
+}
+@keyframes emojiFly {
+  0% { transform: translateY(0) scale(0) rotate(0deg); opacity: 1; }
+  20% { transform: translateY(-50px) scale(1.5) rotate(180deg); opacity: 1; }
+  100% { transform: translateY(-400px) scale(0.5) rotate(720deg); opacity: 0; }
+}
+
+/* 庆祝弹窗 */
+.celebration {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: white; padding: 40px; border-radius: 30px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3); z-index: 1000;
+  text-align: center; max-width: 90%;
+  animation: celebPop 0.5s forwards;
+}
+@keyframes celebPop {
+  0% { transform: translate(-50%,-50%) scale(0) rotate(-180deg); }
+  70% { transform: translate(-50%,-50%) scale(1.1) rotate(10deg); }
+  100% { transform: translate(-50%,-50%) scale(1) rotate(0deg); }
+}
+.celeb-icon { font-size: 80px; margin-bottom: 15px; animation: bounce 1s infinite; }
+.celeb-title { font-size: 24px; color: #ff6b6b; font-weight: bold; margin-bottom: 10px; }
+.celeb-text { font-size: 16px; color: #666; margin-bottom: 20px; }
+
+/* 成就 */
+.achievement-item {
+  background: white; border: 3px solid #ffe0e9; border-radius: 18px;
+  padding: 20px; margin-bottom: 15px; display: flex;
+  align-items: center; gap: 18px; transition: all 0.3s;
+}
+.achievement-item.unlocked {
+  border-color: #ffd700;
+  background: linear-gradient(135deg, #fff9e6 0%, #fff 100%);
+  box-shadow: 0 4px 15px rgba(255,215,0,0.2);
+}
+.achievement-item.locked { opacity: 0.5; filter: grayscale(80%); }
+.achievement-item:hover { transform: translateX(8px); }
+.ach-icon { font-size: 50px; min-width: 70px; text-align: center; }
+.ach-title { font-size: 18px; font-weight: bold; color: #ff6b6b; margin-bottom: 5px; }
+.ach-desc { font-size: 13px; color: #666; }
+.ach-status {
+  margin-left: auto; padding: 6px 14px; border-radius: 12px;
+  font-size: 12px; font-weight: bold;
+}
+.ach-status.done { background: #ffd700; color: white; }
+.ach-status.pending { background: #ffe0e9; color: #999; }
+
+/* 进度条 */
+.progress-bar {
+  width: 100%; height: 24px; background: #ffe0e9;
+  border-radius: 12px; overflow: hidden; margin-top: 8px;
+}
+.progress-fill {
+  height: 100%; background: linear-gradient(90deg, #f093fb, #f5576c);
+  transition: width 1s ease; display: flex;
+  align-items: center; justify-content: center;
+  color: white; font-weight: bold; font-size: 11px;
+}
+
+@media (max-width: 768px) {
+  header h1 { font-size: 24px; }
+  .plant-emoji { font-size: 50px; }
+  .stat-badge { min-width: 110px; padding: 10px; }
+}
+</style>
+</head>
+<body>
+<div class="float-deco" style="top:10%;left:5%;">🌸</div>
+<div class="float-deco" style="top:25%;right:8%;animation-delay:1s;">⭐</div>
+<div class="float-deco" style="top:55%;left:10%;animation-delay:2s;">🎈</div>
+<div class="float-deco" style="top:70%;right:15%;animation-delay:1.5s;">🌈</div>
+<div class="float-deco" style="top:40%;right:5%;animation-delay:0.5s;">💝</div>
+
+<div class="container">
+  <header>
+    <h1>🌱 工作日记养成记 🌱</h1>
+    <p>每天打卡，养成属于你的小花园！</p>
+  </header>
+
+  <div class="motivation-banner" id="motivation-banner">
+    ✨ 今天也要加油鸭！每一份努力都不会白费 ✨
+  </div>
+
+  <div class="garden-section">
+    <div class="garden-title">🌻 我的成长花园 🌻</div>
+    <div class="garden" id="garden"></div>
+    <div style="text-align:center;color:white;font-size:12px;padding:8px 0;text-shadow:1px 1px 2px rgba(0,0,0,0.3);">
+      💡 每打卡1天获得1颗种子，累积打卡让花草长大！
+    </div>
+  </div>
+
+  <div class="stats-panel">
+    <div class="stat-badge">
+      <div class="badge-icon">🔥</div>
+      <div class="badge-value" id="streak-days">0</div>
+      <div class="badge-label">连续打卡</div>
+    </div>
+    <div class="stat-badge">
+      <div class="badge-icon">📅</div>
+      <div class="badge-value" id="total-days">0</div>
+      <div class="badge-label">累计天数</div>
+    </div>
+    <div class="stat-badge">
+      <div class="badge-icon">🏆</div>
+      <div class="badge-value" id="user-level">Lv.1</div>
+      <div class="badge-label">当前等级</div>
+    </div>
+    <div class="stat-badge">
+      <div class="badge-icon">🌱</div>
+      <div class="badge-value" id="seed-count">0</div>
+      <div class="badge-label">种子数量</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-button active" onclick="switchTab(event,'write')">✍️ 今日打卡</button>
+    <button class="tab-button" onclick="switchTab(event,'report')">📊 生成报告</button>
+    <button class="tab-button" onclick="switchTab(event,'history')">📚 成长记录</button>
+    <button class="tab-button" onclick="switchTab(event,'achievement')">🏆 成就中心</button>
+  </div>
+
+  <div id="write-tab" class="tab-content active">
+    <div class="encourage-box" id="daily-encouragement">
+      💪 加油！记录下今天的精彩瞬间吧！
+    </div>
+
+    <h2 style="margin-bottom:20px;color:#ff6b6b;">📝 今天发生了什么呢？</h2>
+
+    <div class="form-group">
+      <label>📅 打卡日期</label>
+      <input type="date" id="work-date" />
+    </div>
+
+    <div class="form-group">
+      <label>💼 今日完成的工作内容 <span style="color:#999;font-size:12px;">（必填）</span></label>
+      <textarea id="work-content" placeholder="写下今天的工作内容～比如完成了什么任务、参加了什么会议..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>✨ 工作亮点/小成就（值得骄傲的事！）</label>
+      <textarea id="work-achievement" placeholder="今天有什么进步或突破？哪怕很小也值得记录！"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>💭 我的心里话 <span style="color:#999;font-size:12px;">（只有自己能看到哦）</span></label>
+      <textarea id="personal-reflection" placeholder="今天的感受、收获、小确幸...随便写什么都可以～"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>🤔 遇到的挑战与反思</label>
+      <textarea id="problems" placeholder="今天遇到了什么困难？学到了什么？下次怎么做会更好？"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>📋 明天的小目标</label>
+      <textarea id="tomorrow-plan" placeholder="明天想要完成什么？给自己定个小目标吧！"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>😊 今日心情指数</label>
+      <div class="mood-selector">
+        <button type="button" class="mood-btn" data-mood="😭" onclick="selectMood(this)">😭 难过</button>
+        <button type="button" class="mood-btn" data-mood="😐" onclick="selectMood(this)">😐 一般</button>
+        <button type="button" class="mood-btn" data-mood="😊" onclick="selectMood(this)">😊 开心</button>
+        <button type="button" class="mood-btn" data-mood="😄" onclick="selectMood(this)">😄 很棒</button>
+        <button type="button" class="mood-btn" data-mood="🥳" onclick="selectMood(this)">🥳 超赞</button>
+      </div>
+      <input type="hidden" id="mood" value="">
+    </div>
+
+    <div class="button-group">
+      <button class="btn-primary" onclick="saveDailySummary()">🎯 打卡保存 +1 种子</button>
+      <button class="btn-secondary" onclick="clearForm()">🔄 清空</button>
+    </div>
+  </div>
+
+  <div id="report-tab" class="tab-content">
+    <h2 style="margin-bottom:20px;color:#ff6b6b;">📊 生成专业报告</h2>
+    <div class="encourage-box">🎯 一键生成给领导看的工作报告，专业又体面！</div>
+    <div class="form-group">
+      <label>📅 选择日期</label>
+      <input type="date" id="report-date" />
+    </div>
+    <div class="button-group">
+      <button class="btn-primary" onclick="generateReport()">🎯 生成报告</button>
+    </div>
+    <div id="report-preview" class="report-preview" style="display:none;">
+      <h3>📋 工作进度报告</h3>
+      <div id="report-content"></div>
+    </div>
+    <div class="button-group" id="report-actions" style="display:none;">
+      <button class="btn-export" onclick="copyReport()">📋 复制报告</button>
+      <button class="btn-export" onclick="exportReport()">📥 导出文本</button>
+      <button class="btn-secondary" onclick="window.print()">🖨️ 打印</button>
+    </div>
+  </div>
+
+  <div id="history-tab" class="tab-content">
+    <h2 style="margin-bottom:20px;color:#ff6b6b;">📚 我的成长足迹</h2>
+    <div class="encourage-box">🌱 每一条记录都是成长的证明，继续加油！</div>
+    <div class="button-group">
+      <button class="btn-export" onclick="exportAllData()">📥 导出数据</button>
+      <button class="btn-export" onclick="importData()">📤 导入数据</button>
+      <button class="btn-secondary" style="background:linear-gradient(135deg,#ff9a9e 0%,#fecfef 100%);color:white;border:none;" onclick="clearAllData()">🗑️ 清空</button>
+    </div>
+    <div id="history-list" style="margin-top:20px;"></div>
+  </div>
+
+  <div id="achievement-tab" class="tab-content">
+    <h2 style="margin-bottom:20px;color:#ff6b6b;">🏆 成就收藏馆</h2>
+    <div class="encourage-box">🌈 解锁更多成就，成为更好的自己！🌈</div>
+    <div id="achievements-container"></div>
+  </div>
+</div>
+
+<input type="file" id="import-file" style="display:none;" accept=".json" onchange="handleImport(event)">
+
+<script>
+// ========== 配置 ==========
+const motivations = [
+  "✨ 今天也要加油鸭！你已经很棒啦！✨",
+  "🌟 每一个努力的日子都值得被记录！🌟",
+  "💪 坚持就是胜利！你做得真好！💪",
+  "🎉 又完成了一天的工作，给自己点个赞！🎉",
+  "🌈 记录成长的每一步，未来会感谢今天的自己！🌈",
+  "⭐ 你的努力，时间看得见！⭐",
+  "🚀 继续保持，你正在变得更好！🚀",
+  "💝 爱自己，从记录生活开始！💝"
+];
+
+const encouragements = [
+  "💪 加油！记录下今天的精彩瞬间吧！",
+  "🌟 今天的你也超级棒！",
+  "✨ 每一天都是新的开始！",
+  "🎯 认真记录，认真生活！",
+  "💖 你值得被温柔对待！",
+  "🌸 慢慢来，一切都来得及！",
+  "🎈 记录美好，留住快乐！"
+];
+
+// 庆祝表情包池
+const celebrationEmojis = ['🎉','🎊','✨','🌟','⭐','💖','💝','🎈','🌈','🏆','👏','🥳','🌸','🌺','🌻','🎁','💐','🦄'];
+
+// 植物生长阶段（按打卡天数解锁）
+// 每株植物需要的天数: 种子1天、小芽3天、小苗7天、含苞14天、盛开30天、参天大树60天
+const plantStages = [
+  { days: 0, emoji: '🪴', name: '空花盆' },
+  { days: 1, emoji: '🌰', name: '种子' },
+  { days: 3, emoji: '🌱', name: '小芽' },
+  { days: 7, emoji: '🌿', name: '小苗' },
+  { days: 14, emoji: '🌷', name: '含苞' },
+  { days: 21, emoji: '🌸', name: '初开' },
+  { days: 30, emoji: '🌹', name: '盛开' },
+  { days: 45, emoji: '🌻', name: '向日葵' },
+  { days: 60, emoji: '🌳', name: '小树' },
+  { days: 90, emoji: '🌲', name: '参天大树' },
+  { days: 120, emoji: '🎋', name: '幸运竹' },
+  { days: 180, emoji: '🏞️', name: '森林' }
+];
+
+// 成就系统
+const achievements = [
+  { id: 'first', icon: '🎊', title: '初来乍到', desc: '完成第一次打卡', req: 1, type: 'total' },
+  { id: 'week', icon: '🔥', title: '坚持一周', desc: '连续打卡7天', req: 7, type: 'streak' },
+  { id: 'month_streak', icon: '🏅', title: '月度勇士', desc: '连续打卡30天', req: 30, type: 'streak' },
+  { id: 'ten', icon: '⭐', title: '小有成就', desc: '累计打卡10天', req: 10, type: 'total' },
+  { id: 'fifty', icon: '💎', title: '持之以恒', desc: '累计打卡50天', req: 50, type: 'total' },
+  { id: 'hundred', icon: '👑', title: '百日大师', desc: '累计打卡100天', req: 100, type: 'total' },
+  { id: 'gardener', icon: '🌻', title: '园艺大师', desc: '种出第一朵盛开的花', req: 30, type: 'total' },
+  { id: 'forest', icon: '🌳', title: '森林守护者', desc: '种出参天大树', req: 90, type: 'total' }
+];
+
+let selectedMood = '';
+
+// ========== 初始化 ==========
+document.addEventListener('DOMContentLoaded', function() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('work-date').value = today;
+  document.getElementById('report-date').value = today;
+  updateMotivation();
+  updateEncouragement();
+  refreshAll();
+  setInterval(updateMotivation, 8000);
+});
+
+function refreshAll() {
+  loadHistory();
+  updateStats();
+  updateGarden();
+  updateAchievements();
+}
+
+function updateMotivation() {
+  document.getElementById('motivation-banner').textContent =
+    motivations[Math.floor(Math.random() * motivations.length)];
+}
+
+function updateEncouragement() {
+  const el = document.getElementById('daily-encouragement');
+  if (el) el.textContent = encouragements[Math.floor(Math.random() * encouragements.length)];
+}
+
+function selectMood(btn) {
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedMood = btn.dataset.mood;
+  document.getElementById('mood').value = selectedMood;
+  spawnEmoji(btn, ['💖','💕','💗']);
+}
+
+function switchTab(event, name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+  document.getElementById(name + '-tab').classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'history') loadHistory();
+  if (name === 'achievement') updateAchievements();
+  if (name === 'write') updateEncouragement();
+}
+
+// ========== 表情包动画 ==========
+function spawnEmoji(element, emojis) {
+  const rect = element.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  for (let i = 0; i < 5; i++) {
+    setTimeout(() => {
+      const e = document.createElement('div');
+      e.className = 'emoji-rain';
+      e.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      e.style.left = (cx + (Math.random() - 0.5) * 100) + 'px';
+      e.style.top = cy + 'px';
+      document.body.appendChild(e);
+      setTimeout(() => e.remove(), 3000);
+    }, i * 100);
+  }
+}
+
+// 全屏表情包雨
+function emojiCelebration() {
+  for (let i = 0; i < 30; i++) {
+    setTimeout(() => {
+      const e = document.createElement('div');
+      e.className = 'emoji-rain';
+      e.textContent = celebrationEmojis[Math.floor(Math.random() * celebrationEmojis.length)];
+      e.style.left = Math.random() * window.innerWidth + 'px';
+      e.style.top = (window.innerHeight - 50) + 'px';
+      e.style.fontSize = (30 + Math.random() * 40) + 'px';
+      document.body.appendChild(e);
+      setTimeout(() => e.remove(), 3000);
+    }, i * 80);
+  }
+}
+
+// 显示庆祝弹窗
+function showCelebration(icon, title, text) {
+  const div = document.createElement('div');
+  div.className = 'celebration';
+  div.innerHTML = `
+    <div class="celeb-icon">${icon}</div>
+    <div class="celeb-title">${title}</div>
+    <div class="celeb-text">${text}</div>
+    <button class="btn-primary" style="flex:none;padding:12px 30px;" onclick="this.parentElement.remove()">太棒啦！</button>
+  `;
+  document.body.appendChild(div);
+  setTimeout(() => { if (div.parentElement) div.remove(); }, 5000);
+}
+
+// ========== 保存数据 ==========
+function saveDailySummary() {
+  const data = {
+    date: document.getElementById('work-date').value,
+    workContent: document.getElementById('work-content').value,
+    achievement: document.getElementById('work-achievement').value,
+    reflection: document.getElementById('personal-reflection').value,
+    problems: document.getElementById('problems').value,
+    tomorrowPlan: document.getElementById('tomorrow-plan').value,
+    mood: document.getElementById('mood').value,
+    timestamp: new Date().getTime()
+  };
+
+  if (!data.date || !data.workContent) {
+    alert('🌸 至少要写下日期和工作内容哦～');
+    return;
+  }
+
+  let summaries = JSON.parse(localStorage.getItem('workSummaries') || '[]');
+  const existingIdx = summaries.findIndex(s => s.date === data.date);
+  let isNew = true;
+
+  if (existingIdx >= 0) {
+    if (!confirm('该日期已有记录，是否覆盖？')) return;
+    summaries[existingIdx] = data;
+    isNew = false;
+  } else {
+    summaries.push(data);
+  }
+
+  summaries.sort((a, b) => new Date(b.date) - new Date(a.date));
+  localStorage.setItem('workSummaries', JSON.stringify(summaries));
+
+  // 触发表情包雨
+  emojiCelebration();
+
+  // 显示庆祝弹窗
+  const total = summaries.length;
+  const streak = calculateStreak(summaries);
+
+  if (isNew) {
+    const moodEmoji = data.mood || '🌟';
+    showCelebration(
+      moodEmoji,
+      '打卡成功！+1🌱',
+      `已累计打卡 ${total} 天，连续打卡 ${streak} 天，继续加油！`
+    );
+
+    // 检查成就解锁
+    checkNewAchievements(total, streak);
+  } else {
+    showCelebration('✏️', '记录已更新！', '内容已成功修改～');
+  }
+
+  setTimeout(() => { clearForm(); refreshAll(); }, 800);
+}
+
+function clearForm() {
+  ['work-content','work-achievement','personal-reflection','problems','tomorrow-plan'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('work-date').value = new Date().toISOString().split('T')[0];
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('mood').value = '';
+  selectedMood = '';
+}
+
+// ========== 计算连续打卡 ==========
+function calculateStreak(summaries) {
+  if (summaries.length === 0) return 0;
+  const dates = summaries.map(s => s.date).sort().reverse();
+  let streak = 1;
+  const today = new Date().toISOString().split('T')[0];
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+  // 最新一天必须是今天或昨天
+  if (dates[0] !== today && dates[0] !== yesterday) return 0;
+  for (let i = 1; i < dates.length; i++) {
+    const prev = new Date(dates[i - 1]);
+    const cur = new Date(dates[i]);
+    const diff = (prev - cur) / 86400000;
+    if (diff === 1) streak++;
+    else break;
+  }
+  return streak;
+}
+
+// ========== 更新统计 ==========
+function updateStats() {
+  const summaries = JSON.parse(localStorage.getItem('workSummaries') || '[]');
+  const total = summaries.length;
+  const streak = calculateStreak(summaries);
+  const level = Math.floor(total / 10) + 1;
+
+  document.getElementById('total-days').textContent = total;
+  document.getElementById('streak-days').textContent = streak;
+  document.getElementById('user-level').textContent = 'Lv.' + level;
+  document.getElementById('seed-count').textContent = total;
+}
+
+// ========== 花园系统 ==========
+function getPlantStage(days) {
+  let stage = plantStages[0];
+  for (const s of plantStages) {
+    if (days >= s.days) stage = s;
+  }
+  return stage;
+}
+
+function getNextStage(days) {
+  for (const s of plantStages) {
+    if (days < s.days) return s;
+  }
+  return null;
+}
+
+function updateGarden() {
+  const summaries = JSON.parse(localStorage.getItem('workSummaries') || '[]');
+  const total = summaries.length;
+  const garden = document.getElementById('garden');
+
+  // 每30天养一株植物，至少显示3株
+  const plantCount = Math.max(3, Math.ceil(total / 30) + 2);
+  const maxShow = Math.min(plantCount, 6);
+
+  let html = '';
+  for (let i = 0; i < maxShow; i++) {
+    // 第i株植物的"实际可用天数"
+    const plantDays = Math.max(0, total - i * 30);
+    const stage = getPlantStage(plantDays);
+    const next = getNextStage(plantDays);
+    const progress = next
+      ? Math.min(100, Math.round((plantDays - stage.days) / (next.days - stage.days) * 100))
+      : 100;
+    const tooltip = next
+      ? `${stage.name}｜还需${next.days - plantDays}天升级为${next.name}`
+      : `${stage.name}｜已满级！`;
+
+    html += `
+      <div class="plant-pot" title="${tooltip}" onclick="plantClick(this,${i})">
+        <span class="plant-emoji" style="animation-delay:${i*0.3}s;">${stage.emoji}</span>
+        <div class="plant-progress"><div class="plant-progress-fill" style="width:${progress}%;"></div></div>
+        <span class="plant-label">${stage.name}</span>
+      </div>
+    `;
+  }
+  garden.innerHTML = html;
+}
+
+function plantClick(el, idx) {
+  spawnEmoji(el, ['🌸','🌺','🌼','✨','💚']);
+}
+
+// ========== 报告 ==========
+function generateReport() {
+  const date = document.getElementById('report-date').value;
+  if (!date) return alert('请选择日期！');
+  const summaries = JSON.parse(localStorage.getItem('workSummaries') || '[]');
+  const s = summaries.find(x => x.date === date);
+  if (!s) return alert('该日期没有打卡记录哦～');
+
+  let report = `工作日报 - ${date}\n\n`;
+  report += `一、今日工作完成情况\n${s.workContent}\n\n`;
+  if (s.achievement) report += `二、工作亮点与成果\n${s.achievement}\n\n`;
+  if (s.tomorrowPlan) report += `三、明日工作计划\n${s.tomorrowPlan}\n\n`;
+
+  document.getElementById('report-content').textContent = report;
+  document.getElementById('report-preview').style.display = 'block';
+  document.getElementById('report-actions').style.display = 'flex';
+}
+
+function copyReport() {
+  const txt = document.getElementById('report-content').textContent;
+  navigator.clipboard.writeText(txt).then(() => {
+    showCelebration('📋', '复制成功！', '报告已复制到剪贴板，可直接粘贴发送～');
+  });
+}
+
+function exportReport() {
+  const txt = document.getElementById('report-content').textContent;
+  const date = document.getElementById('report-date').value;
+  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `工作日报-${date}.txt`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ========== 历史记录 ==========
+function loadHistory() {
+  const summaries = JSON.parse(localStorage.getItem('workSummaries') || '[]');
+  const list = document.getElementById('history-list');
+  if (summaries.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>还没有打卡记录哦～<br>开始你的第一次打卡吧！</p></div>`;
+    return;
+  }
+  list.innerHTML = summaries.map((s, i) => `
+    <div class="history-item">
+      <div class="history-date">${s.mood || '📅'} ${s.date}</div>
+      <div class="history-content">
+        <strong>工作内容：</strong>${escapeHtml(s.workContent.substring(0, 120))}${s.workContent.length > 120 ? '...' : ''}
+      </div>
+      <div class="history-actions">
+        <button class="btn-secondary btn-small" onclick="viewDetail(${i})">👁️ 详情</button>
+        <button class="btn-secondary btn-small" onclick="editSummary(${i})">✏️ 编辑</button>
+        <button class="btn-secondary btn-small" onclick="deleteSummary(${i})">🗑️ 删除</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function viewDetail(i) {
+  const s = JSON.parse(localStorage.getItem('workSummaries'))[i];
+  let d = `📅 日期：${s.date}\n心情：${s.mood || '未记录'}\n\n`;
+  d += `💼 工作内容：\n${s.workContent}\n\n`;
+  if (s.achievement) d += `✨ 工作亮点：\n${s.achievement}\n\n`;
+  if (s.reflection) d += `💭 个人心得：\n${s.reflection}\n\n`;
+  if (s.problems) d += `🤔 问题反思：\n${s.problems}\n\n`;
+  if (s.tomorrowPlan) d += `📋 明日计划：\n${s.tomorrowPlan}\n`;
+  alert(d);
+}
+
+function editSummary(i) {
+  const s = JSON.parse(localStorage.getItem('workSummaries'))[i];
+  document.getElementById('work-date').value = s.date;
+  document.getElementById('work-content').value = s.workContent;
+  document.getElementById('work-achievement').value = s.achievement || '';
+  document.getElementById('personal-reflection').value = s.reflection || '';
+  document.getElementById('problems').value = s.problems || '';
+  document.getElementById('tomorrow-plan').value = s.tomorrowPlan || '';
+  // 切换到写入页
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+  document.getElementById('write-tab').classList.add('active');
+  document.querySelectorAll('.tab-button')[0].classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function deleteSummary(i) {
+  if (!confirm('确定要删除这条打卡记录吗？')) return;
+  let summaries = JSON.parse(localStorage.getItem('workSummaries'));
+  summaries.splice(i, 1);
+  localStorage.setItem('workSummaries', JSON.stringify(summaries));
+  refreshAll();
+}
+
+// ========== 数据导入导出 ==========
+function exportAllData() {
+  const data = localStorage.getItem('workSummaries') || '[]';
+  if (JSON.parse(data).length === 0) return alert('没有数据可导出哦～');
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `工作打卡数据-${new Date().toISOString().split('T')[0]}.json`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function importData() { document.getElementById('import-file').click(); }
+
+function handleImport(e) {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      const d = JSON.parse(ev.target.result);
+      if (Array.isArray(d) && confirm('导入数据将覆盖现有数据，继续吗？')) {
+        localStorage.setItem('workSummaries', JSON.stringify(d));
+        refreshAll();
+        showCelebration('📥', '导入成功！', `已成功导入 ${d.length} 条记录`);
+      }
+    } catch (er) { alert('❌ 文件格式错误！'); }
+  };
+  r.readAsText(f);
+}
+
+function clearAllData() {
+  if (!confirm('确定要清空所有数据吗？此操作不可恢复！')) return;
+  if (!confirm('再次确认：真的要删除所有打卡记录和花园吗？')) return;
+  localStorage.removeItem('workSummaries');
+  localStorage.removeItem('unlockedAchievements');
+  refreshAll();
+  alert('✅ 已清空所有数据');
+}
+
+// ========== 成就系统 ==========
+function getUnlocked() {
+  return JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
+}
+
+function checkNewAchievements(total, streak) {
+  const unlocked = getUnlocked();
+  const newly = [];
+  achievements.forEach(a => {
+    if (unlocked.includes(a.id)) return;
+    const val = a.type === 'streak' ? streak : total;
+    if (val >= a.req) {
+      unlocked.push(a.id);
+      newly.push(a);
+    }
+  });
+  if (newly.length > 0) {
+    localStorage.setItem('unlockedAchievements', JSON.stringify(unlocked));
+    // 延迟显示成就解锁
+    setTimeout(() => {
+      newly.forEach((a, idx) => {
+        setTimeout(() => {
+          showCelebration(a.icon, `🏆 解锁成就：${a.title}`, a.desc);
+          emojiCelebration();
+        }, idx * 1500);
+      });
+    }, 1500);
+  }
+}
+
+function updateAchievements() {
+  const summaries = JSON.parse(localStorage.getItem('workSummaries') || '[]');
+  const total = summaries.length;
+  const streak = calculateStreak(summaries);
+  const unlocked = getUnlocked();
+
+  const html = achievements.map(a => {
+    const val = a.type === 'streak' ? streak : total;
+    const done = unlocked.includes(a.id) || val >= a.req;
+    const progress = Math.min(100, Math.round(val / a.req * 100));
+    return `
+      <div class="achievement-item ${done ? 'unlocked' : 'locked'}">
+        <div class="ach-icon">${a.icon}</div>
+        <div style="flex:1;">
+          <div class="ach-title">${a.title}</div>
+          <div class="ach-desc">${a.desc}</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${progress}%;">${Math.min(val, a.req)}/${a.req}</div></div>
+        </div>
+        <div class="ach-status ${done ? 'done' : 'pending'}">${done ? '✅ 已解锁' : '🔒 未解锁'}</div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('achievements-container').innerHTML = html;
+}
+</script>
+</body>
+</html>
